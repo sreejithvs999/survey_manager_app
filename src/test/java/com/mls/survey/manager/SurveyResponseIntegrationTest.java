@@ -50,7 +50,7 @@ private static final Logger logger = LoggerFactory.getLogger(SurveyQuestionInteg
 	@Test
 	public void testSurveyResponsePoll() throws Exception {
 		
-		String payload = "{\"questionText\" : \"How often you buy Nutrition or Healthcare suppliments through online stores?\","
+		String payload = "{\"questionText\" : \"How often you buy Nutrition or Healthcare supplements through online stores?\","
 				+ "\"options\" : ["
 				+ "{\"description\" : \"Very Often\"},"
 				+ "{\"description\" : \"Once in a while\"},"
@@ -58,14 +58,14 @@ private static final Logger logger = LoggerFactory.getLogger(SurveyQuestionInteg
 				+ "]}";
 		helper.callCreateQuestion(payload);	
 		
-		payload = "{\"questionText\" : \"Do you consumes Vitamins suppliments?\","
+		payload = "{\"questionText\" : \"Do you consumes Vitamins supplements?\","
 				+ "\"options\" : ["
 				+ "{\"description\" : \"Yes\"},"
 				+ "{\"description\" : \"No\"}"
 				+ "]}";
 		helper.callCreateQuestion(payload);	
 		
-		payload = "{\"questionText\" : \"Where do you prefer buying Nutrition suppliments from?\","
+		payload = "{\"questionText\" : \"Where do you prefer buying Nutrition supplements from?\","
 				+ "\"options\" : ["
 				+ "{\"description\" : \"Medical stores\"},"
 				+ "{\"description\" : \"Brands own stores\"},"

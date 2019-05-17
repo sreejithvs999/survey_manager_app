@@ -2,7 +2,6 @@ package com.mls.survey.manager;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -154,7 +153,7 @@ public class SurveyQuestionIntegrationTest {
 		assertTrue(option.isPresent());
 		assertTrue(option.get().getOptionId().equals(brandOptionId));		
 	}
-	
+		
 	@After
 	public void cleanUpTestData() {
 		
