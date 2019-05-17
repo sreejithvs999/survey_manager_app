@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mls.survey.manager.bean.SurveyQuestionBean;
-import com.mls.survey.manager.bean.SurveyResponseForm;
-import com.mls.survey.manager.service.SurveyPollingServices;
 import com.mls.survey.manager.service.SurveyQuestionsServices;
 
 @RestController

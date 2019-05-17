@@ -56,7 +56,7 @@ public class DefaultAnswerOptionsServices implements AnswerOptionServices {
 		validator.validateQuestionDO(questionDo, answerOption.getQuestion().getQuestionId());
 		answerOptionDO.setQuestionId(questionDo.getQuestionId());
 		answerOptionDO.setDescription(answerOption.getDescription());
-
+		answerOptionDO.setVoteCount(0L);
 		optionsDao.saveAnswerOption(answerOptionDO);
 		return AnswerOptionBean.ofId(answerOption.getOptionId());
 	}

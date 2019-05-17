@@ -34,11 +34,13 @@ public class SurveyQuestionsDao {
 		jdbcTemplate.update(con -> {
 			PreparedStatement ps = con.prepareStatement(SQL_INSERT_QUESTION, Statement.RETURN_GENERATED_KEYS);
 			ps.setString(1, question.getQuestionText());
-			ps.setTimestamp(2, new Timestamp(question.getModifiedTime().toEpochMilli()));
+			ps.setInt(2, question.getStatus());
+			ps.setTimestamp(3, new Timestamp(question.getModifiedTime().toEpochMilli()));
 			return ps;
 		}, keyHolder);
 
-		question.setQuestionId(keyHolder.getKey().intValue());
+		logger.debug("keys =={} ", keyHolder.getKeys());
+		question.setQuestionId(((Number) keyHolder.getKeys().get("question_id")).intValue());
 		if (logger.isDebugEnabled()) {
 			logger.debug("Inserted Question data. id={} ", question.getQuestionId());
 		}
@@ -63,34 +65,32 @@ public class SurveyQuestionsDao {
 
 	public QuestionDO getQuestion(Integer questionId) {
 
-		return jdbcTemplate.query(SQL_GET_QUESTION, (rs) -> {
+		return jdbcTemplate.query(SQL_GET_QUESTION, pss -> pss.setInt(1, questionId), (rs) -> {
 			if (!rs.next()) {
 				return null;
 			}
 			QuestionDO question = new QuestionDO();
-			question.setQuestionId(rs.getInt(""));
-			question.setQuestionText(rs.getString(""));
-			question.setModifiedTime(Instant.ofEpochMilli(rs.getTimestamp("").getTime()));
-			question.setStatus(rs.getInt(""));
+			question.setQuestionId(rs.getInt("question_id"));
+			question.setQuestionText(rs.getString("question_text"));
+			question.setModifiedTime(Instant.ofEpochMilli(rs.getTimestamp("modified_time").getTime()));
+			question.setStatus(rs.getInt("status"));
 			return question;
 		});
 	}
 
 	public List<QuestionDO> getQuestions(Integer status) {
 
-		List<QuestionDO> list = new ArrayList<QuestionDO>();
-		jdbcTemplate.query(con -> {
+		return jdbcTemplate.query(con -> {
 			PreparedStatement ps = con.prepareStatement(SQL_GET_QUESTIONS_OF_STATUS);
 			ps.setInt(1, status);
 			return ps;
 		}, (rs, i) -> {
 			QuestionDO question = new QuestionDO();
-			question.setQuestionId(rs.getInt(""));
-			question.setQuestionText(rs.getString(""));
-			question.setModifiedTime(Instant.ofEpochMilli(rs.getTimestamp("").getTime()));
+			question.setQuestionId(rs.getInt("question_id"));
+			question.setQuestionText(rs.getString("question_text"));
+			question.setModifiedTime(Instant.ofEpochMilli(rs.getTimestamp("modified_time").getTime()));
 			return question;
 		});
-		return list;
 	}
 
 	public List<SurveySummaryView> getSurveyResult(Integer status) {
@@ -106,18 +106,17 @@ public class SurveyQuestionsDao {
 			while (rs.next()) {
 
 				QuestionDO question = new QuestionDO();
-				question.setQuestionId(rs.getInt(""));
+				question.setQuestionId(rs.getInt("question_id"));
 
 				AnswerOptionDO answer = new AnswerOptionDO();
-				answer.setOptionId(rs.getInt(""));
-				answer.setDescription(rs.getString(""));
-				answer.setVoteCount(rs.getLong(""));
+				answer.setOptionId(rs.getInt("option_id"));
+				answer.setDescription(rs.getString("description"));
+				answer.setVoteCount(rs.getLong("vote_count"));
 
 				List<AnswerOptionDO> answerList;
 
 				if (!answerTab.containsKey(question)) {
-					question.setQuestionText(rs.getString(""));
-					question.setQuestionId(rs.getInt(""));
+					question.setQuestionText(rs.getString("question_text"));
 					answerList = answerTab.compute(question, (k, v) -> new ArrayList<>());
 				} else {
 					answerList = answerTab.get(question);
@@ -135,11 +134,12 @@ public class SurveyQuestionsDao {
 		});
 	}
 
-	private static final String SQL_INSERT_QUESTION = "";
-	private static final String SQL_UPDATE_QUESTION = "";
-	private static final String SQL_UPDATE_QUESTION_STATUS = "";
-	private static final String SQL_GET_QUESTIONS_OF_STATUS = "";
-	private static final String SQL_GET_QUESTION = "";
-	private static final String SQL_GET_QUESTIONS_ANSWERS_RESULT = "";
+	private static final String SQL_INSERT_QUESTION = "insert into survey_question(question_text, status, modified_time) values(?, ?, ?)";
+	private static final String SQL_UPDATE_QUESTION = "update survey_question set question_text=?, modified_time=? where question_id=?";
+	private static final String SQL_UPDATE_QUESTION_STATUS = "update survey_question set status=? where question_id=?";
+	private static final String SQL_GET_QUESTIONS_OF_STATUS = "select * from survey_question where status = ?";
+	private static final String SQL_GET_QUESTION = "select * from survey_question where question_id=?";
+	private static final String SQL_GET_QUESTIONS_ANSWERS_RESULT = "select q.question_id, q.question_text, o.option_id, o.description, o.vote_count "
+			+ "from survey_question q left outer join answer_option o on o.question_id = q.question_id where q.status = ?";
 
 }

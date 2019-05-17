@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,8 +33,16 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(errorResponse(exception.getMessage()), HttpStatus.BAD_REQUEST);
 	}
 
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
+		if (exception.getCause() instanceof JsonProcessingException) {
+			return handleJsonProcessingException((JsonProcessingException) exception.getCause());
+		}
+		return handleAllExceptions(exception);
+	}
+
 	@ExceptionHandler(JsonProcessingException.class)
-	public ResponseEntity<?> handleServletRequestBindingException(JsonProcessingException exception) {
+	public ResponseEntity<?> handleJsonProcessingException(JsonProcessingException exception) {
 		if (logger.isWarnEnabled()) {
 			logger.warn("JSON Processing Error", exception.getMessage());
 		}

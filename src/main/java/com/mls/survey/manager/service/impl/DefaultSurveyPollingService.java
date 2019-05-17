@@ -7,6 +7,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.mls.survey.manager.bean.AnswerOptionBean;
 import com.mls.survey.manager.bean.SurveyQuestionBean;
@@ -19,6 +20,7 @@ import com.mls.survey.manager.exceptions.InvalidInputException;
 import com.mls.survey.manager.service.SurveyPollingServices;
 import com.mls.survey.manager.service.SurveyQuestionsServices;
 
+@Service
 public class DefaultSurveyPollingService implements SurveyPollingServices {
 
 	private static final Logger logger = LoggerFactory.getLogger(DefaultSurveyPollingService.class);

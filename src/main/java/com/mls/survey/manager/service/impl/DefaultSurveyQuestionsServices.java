@@ -36,7 +36,7 @@ public class DefaultSurveyQuestionsServices implements SurveyQuestionsServices {
 		for (QuestionDO questionDO : questionDOList) {
 			SurveyQuestionBean question = new SurveyQuestionBean();
 			question.setQuestionId(questionDO.getQuestionId());
-			question.setQuestionText(question.getQuestionText());
+			question.setQuestionText(questionDO.getQuestionText());
 			question.setModifiedTime(questionDO.getModifiedTime());
 			questions.add(question);
 		}

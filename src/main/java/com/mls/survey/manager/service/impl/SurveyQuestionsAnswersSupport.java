@@ -47,9 +47,8 @@ public class SurveyQuestionsAnswersSupport {
 		for (AnswerOptionBean newAnswer : newAnswers) {
 			Optional<AnswerOptionDO> optAnswer = savedAnswers.stream()
 					.filter(sa -> sa.getOptionId().equals(newAnswer.getOptionId())).findFirst();
-			if (optAnswer.isEmpty()) {
+			if (!optAnswer.isPresent()) {
 				throw new DataNotFoundException("No answer option found with id: " + newAnswer.getOptionId());
-
 			}
 			AnswerOptionDO answerToUpdate = optAnswer.get();
 			answerToUpdate.setDescription(newAnswer.getDescription());
